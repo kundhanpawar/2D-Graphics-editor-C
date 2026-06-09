@@ -102,33 +102,16 @@ void redrawCanvas()
             switch(shapes[i].type)
             {
                 case 1:
-                    drawLine(
-                        shapes[i].row,
-                        shapes[i].col,
-                        shapes[i].p1
-                    );
+                    drawLine(shapes[i].row,shapes[i].col,shapes[i].p1);
                     break;
                 case 2:
-                    drawRectangle(
-                        shapes[i].row,
-                        shapes[i].col,
-                        shapes[i].p1,
-                        shapes[i].p2
-                    );
+                    drawRectangle(shapes[i].row,shapes[i].col,shapes[i].p1,shapes[i].p2);
                     break;
                 case 3:
-                    drawTriangle(
-                        shapes[i].row,
-                        shapes[i].col,
-                        shapes[i].p1
-                    );
+                    drawTriangle(shapes[i].row,shapes[i].col,shapes[i].p1);
                     break;
                 case 4:
-                    drawCircle(
-                        shapes[i].row,
-                        shapes[i].col,
-                        shapes[i].p1
-                    );
+                    drawCircle(shapes[i].row,shapes[i].col,shapes[i].p1);
                     break;
             }
         }
@@ -146,14 +129,173 @@ void displayCanvas()
         printf("\n");
     }
 }
+void addShape()
+{
+    Shape s;
+    int choice;
+    printf("\n");
+    printf("1. Line\n");
+    printf("2. Rectangle\n");
+    printf("3. Triangle\n");
+    printf("4. Circle\n");
+    printf("Enter Shape Type: ");
+    scanf("%d", &choice);
+    s.id = nextID++;
+    s.type = choice;
+    s.active = 1;
+    switch(choice)
+    {
+        case 1:
+            printf("Enter Row StartCol EndCol: ");
+            scanf("%d %d %d", &s.row,&s.col,&s.p1);
+            s.p2 = 0;
+            break;
+        case 2:
+            printf("Enter Row Col Height Width: ");
+            scanf("%d %d %d %d",&s.row,&s.col,&s.p1,&s.p2);
+            break;
+        case 3:
+            printf("Enter Row Col Height: ");
+            scanf("%d %d %d",&s.row,&s.col,&s.p1);
+            s.p2 = 0;
+            break;
+        case 4:
+            printf("Enter CenterRow CenterCol Radius: ");
+            scanf("%d %d %d",&s.row,&s.col,&s.p1);
+            s.p2 = 0;
+            break;
+        default:
+            printf("Invalid Shape!\n");
+            return;
+    }
+    shapes[shapeCount++] = s;
+    redrawCanvas();
+    printf("Shape Added! ID = %d\n", s.id);
+}
+void deleteShape()
+{
+    int id;
+    int i;
+    int found = 0;
+    printf("Enter Shape ID to Delete: ");
+    scanf("%d", &id);
+    for(i = 0; i < shapeCount; i++)
+    {
+        if(shapes[i].id == id &&
+           shapes[i].active == 1)
+        {
+            shapes[i].active = 0;
+            found = 1;
+            break;
+        }
+    }
+    if(found)
+    {
+        redrawCanvas();
+        printf("Shape Deleted!\n");
+    }
+    else
+    {
+        printf("Shape ID Not Found!\n");
+    }
+}
+void modifyShape()
+{
+    int id;
+    int i;
+    int found = 0;
+    printf("Enter Shape ID to Modify: ");
+    scanf("%d", &id);
+    for(i = 0; i < shapeCount; i++)
+    {
+        if(shapes[i].id == id && shapes[i].active == 1)
+        {
+            found = 1;
+            switch(shapes[i].type)
+            {
+                case 1:
+                    printf("Enter New Row StartCol EndCol: ");
+                    scanf("%d %d %d",&shapes[i].row,&shapes[i].col,&shapes[i].p1);
+                    break;
+                case 2:
+                    printf("Enter New Row Col Height Width: ");
+                    scanf("%d %d %d %d",&shapes[i].row,&shapes[i].col,&shapes[i].p1,&shapes[i].p2);
+                    break;
+                case 3:
+                    printf("Enter New Row Col Height: ");
+                    scanf("%d %d %d",&shapes[i].row,&shapes[i].col,&shapes[i].p1);
+                    break;
+                case 4:
+                    printf("Enter New CenterRow CenterCol Radius: ");
+                    scanf("%d %d %d",&shapes[i].row,&shapes[i].col,&shapes[i].p1);
+                    break;
+            }
+            redrawCanvas();
+            printf("Shape Modified!\n");
+            break;
+        }
+    }
+    if(!found)
+    {
+        printf("Shape ID Not Found!\n");
+    }
+}
+void listShapes()
+{
+    int i;
+    printf("\nStored Shapes:\n");
+    for(i = 0; i < shapeCount; i++)
+    {
+        if(shapes[i].active)
+        {
+            printf("ID: %d  Type: %d\n",shapes[i].id,shapes[i].type);
+        }
+    }
+}
 int main()
 {
-    printf("===== 2D GRAPHICS EDITOR =====\n\n");
+    int choice;
     initializeCanvas();
-    drawLine(5, 10, 30);
-    drawRectangle(10, 5, 5, 15);
-    drawTriangle(2, 2, 6);
-    drawCircle(10, 30, 4);
-    displayCanvas();
+    do{
+        printf("===== 2D GRAPHICS EDITOR =====\n\n");
+        printf("1. Add Shape\n");
+        printf("2. Display Canvas\n");
+        printf("3. Delete Shape\n");
+        printf("4. Modify Shape\n");
+        printf("5. List Shapes\n");
+        printf("6. Clear Canvas\n");
+        printf("7. Exit\n");
+        printf("Enter Choice: ");
+        scanf("%d", &choice);
+        switch(choice)
+        {
+            case 1:
+                addShape();
+                break;
+            case 2:
+                displayCanvas();
+                break;
+            case 3:
+                deleteShape();
+                break;
+            case 4:
+                modifyShape();
+                break;
+            case 5:
+                listShapes();
+                break;
+            case 6:
+                shapeCount = 0;
+                initializeCanvas();
+                printf("Canvas Cleared!\n");
+                break;
+            case 7:
+                printf("Exiting Program...\n");
+                break;
+            default:
+                printf("Invalid Choice!\n");
+        }
+    } 
+    while(choice != 7);
     return 0;
 }
