@@ -68,5 +68,4 @@ run
 
 S KUNDHAN RAO PAWAR
 R25EH103
-K Naveen S Nayak
-R25EH056
+
